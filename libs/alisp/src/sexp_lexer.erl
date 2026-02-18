@@ -39,6 +39,12 @@ string([$) | T], Line) ->
     [{')', Line} | string(T, Line)];
 string([$\s | T], Line) ->
     string(T, Line);
+string([$\t | T], Line) ->
+    string(T, Line);
+string([$' | T], Line) ->
+    [{quote, Line} | string(T, Line)];
+string([$; | T], Line) ->
+    skip_comment(T, Line);
 string([$-, Digit | _T] = L, Line) when Digit >= $0 andalso Digit =< $9 ->
     integer(L, "", Line);
 string([$- | _T] = L, Line) ->
@@ -104,6 +110,13 @@ make_symbol(T, Acc, Line) ->
 make_symbol_prefix(T, Acc, Line) ->
     Symbol = reverse(Acc),
     [{symbol_prefix, Line, Symbol} | string(T, Line)].
+
+skip_comment([], Line) ->
+    string([], Line);
+skip_comment([$\n | T], Line) ->
+    string(T, Line + 1);
+skip_comment([_ | T], Line) ->
+    skip_comment(T, Line).
 
 reverse(L) ->
     reverse(L, "").

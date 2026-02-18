@@ -23,7 +23,22 @@
 -export([parse/1]).
 
 parse([{'(', _Line} | T]) ->
-    parse(T, []).
+    parse(T, []);
+parse([{quote, _Line}, {'(', _Line2} | T]) ->
+    case parse(T, []) of
+        {[], L} -> [quote, L];
+        L when is_list(L) -> [quote, L]
+    end;
+parse([{quote, _Line}, {symbol, _Line2, Sym}]) ->
+    [quote, erlang:list_to_atom(Sym)];
+parse([{quote, _Line}, {integer, _Line2, Int}]) ->
+    [quote, Int];
+parse([{quote, _Line}, {binary, _Line2, Bin}]) ->
+    [quote, Bin];
+parse([{symbol, _Line, Sym}]) ->
+    erlang:list_to_atom(Sym);
+parse([{integer, _Line, Int}]) ->
+    Int.
 
 parse([{')', _Line}], Acc) ->
     reverse(Acc);
@@ -32,6 +47,17 @@ parse([{'(', _Line} | T], Acc) ->
     parse(NewTail, [L | Acc]);
 parse([{')', _Line} | T], Acc) ->
     {T, reverse(Acc)};
+parse([{quote, _Line}, {'(', _Line2} | T], Acc) ->
+    {NewTail, L} = parse(T, []),
+    parse(NewTail, [[quote, L] | Acc]);
+parse([{quote, _Line}, {symbol_prefix, _Line1, SymPrefix}, {symbol, _Line2, Sym} | T], Acc) ->
+    parse(T, [[quote, [symbol_pair, erlang:list_to_atom(SymPrefix), erlang:list_to_atom(Sym)]] | Acc]);
+parse([{quote, _Line}, {symbol, _Line2, Sym} | T], Acc) ->
+    parse(T, [[quote, erlang:list_to_atom(Sym)] | Acc]);
+parse([{quote, _Line}, {integer, _Line2, Int} | T], Acc) ->
+    parse(T, [[quote, Int] | Acc]);
+parse([{quote, _Line}, {binary, _Line2, Bin} | T], Acc) ->
+    parse(T, [[quote, Bin] | Acc]);
 parse([{symbol_prefix, _Line1, SymPrefix}, {symbol, _Line2, Sym} | T], Acc) ->
     parse(T, [[symbol_pair, erlang:list_to_atom(SymPrefix), erlang:list_to_atom(Sym)] | Acc]);
 parse([{symbol, _Line, Sym} | T], Acc) ->
