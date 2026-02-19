@@ -51,6 +51,8 @@ void mailbox_init(Mailbox *mbx)
 // Convert a mailbox message (struct Message or struct TermSignal) to a heap
 // fragment (HeapFragment) so it can be owned by the recipient.
 // We assert this layout mapping is correct.
+#ifndef _MSC_VER
+// MSVC doesn't support array subscripts in offsetof as constant expressions
 _Static_assert(offsetof(struct Message, base) + offsetof(struct MailboxMessage, next) == offsetof(HeapFragment, next) ? 1 : 0,
     "Message.base.next doesn't match HeapFragment.next");
 _Static_assert(offsetof(struct Message, base) + offsetof(struct MailboxMessage, type) == offsetof(HeapFragment, heap_end) ? 1 : 0,
@@ -71,6 +73,7 @@ _Static_assert(offsetof(struct TermSignal, heap_end) == offsetof(HeapFragment, s
     "TermSignal.heap_end doesn't match HeapFragment.storage[1]");
 _Static_assert(sizeof(struct TermSignal) == sizeof(HeapFragment) + 2 * sizeof(term) ? 1 : 0,
     "sizeof(TermSignal) doesn't match sizeof(HeapFragment) + 2 terms");
+#endif
 
 HeapFragment *mailbox_message_to_heap_fragment(void *m, term *heap_end)
 {

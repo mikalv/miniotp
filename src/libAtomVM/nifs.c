@@ -2425,8 +2425,8 @@ static term integer_to_buf(Context *ctx, int argc, term argv[], char *tmp_buf, s
 
 static term nif_erlang_integer_to_binary_2(Context *ctx, int argc, term argv[])
 {
+    char tmp_buf[INT64_WRITE_TO_ASCII_BUF_LEN];
     size_t tmp_buf_size = INT64_WRITE_TO_ASCII_BUF_LEN;
-    char tmp_buf[tmp_buf_size];
 
     char *int_buf;
     size_t int_len;
@@ -2452,8 +2452,8 @@ static term nif_erlang_integer_to_binary_2(Context *ctx, int argc, term argv[])
 
 static term nif_erlang_integer_to_list_2(Context *ctx, int argc, term argv[])
 {
+    char tmp_buf[INT64_WRITE_TO_ASCII_BUF_LEN];
     size_t tmp_buf_size = INT64_WRITE_TO_ASCII_BUF_LEN;
-    char tmp_buf[tmp_buf_size];
 
     char *int_buf;
     size_t int_len;

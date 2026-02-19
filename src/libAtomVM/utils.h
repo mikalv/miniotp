@@ -316,17 +316,19 @@ static inline __attribute__((always_inline)) func_ptr_t cast_void_to_func_ptr(vo
 #endif
 
 #ifdef __GNUC__
-#define NO_DISCARD \
-    __attribute__((warn_unused_result))
+#define NO_DISCARD __attribute__((warn_unused_result))
+#elif defined(_MSC_VER)
+#define NO_DISCARD _Check_return_
 #else
-#define NO_DISCARD(...)
+#define NO_DISCARD
 #endif
 
 #ifdef __GNUC__
-#define UNREACHABLE() \
-    __builtin_unreachable()
+#define UNREACHABLE() __builtin_unreachable()
+#elif defined(_MSC_VER)
+#define UNREACHABLE() __assume(0)
 #else
-#define UNREACHABLE(...)
+#define UNREACHABLE()
 #endif
 
 #if defined(__GNUC__) && !defined(__clang__)

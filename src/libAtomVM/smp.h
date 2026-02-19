@@ -56,12 +56,15 @@
 #endif
 
 // spinlocks are implemented using atomics
+// ATOMIC may already be defined by platform_atomic.h
 #if !defined(SMP_PLATFORM_SPINLOCK)
+#ifndef ATOMIC
 #if defined(HAVE_ATOMIC) && !defined(__cplusplus)
 #include <stdatomic.h>
 #define ATOMIC _Atomic
 #else
 #define ATOMIC
+#endif
 #endif
 #endif
 

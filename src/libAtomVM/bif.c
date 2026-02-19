@@ -581,8 +581,7 @@ static void conv_term_to_bigint(term t, intn_digit_t *tmp_buf, const intn_digit_
 static term add_int64_to_bigint(
     Context *ctx, uint32_t fail_label, uint32_t live, int64_t val1, int64_t val2)
 {
-    size_t out_buf_len = INTN_ADD_OUT_LEN(INTN_INT64_LEN, INTN_INT64_LEN);
-    intn_digit_t add_out[out_buf_len];
+    intn_digit_t add_out[INTN_ADD_OUT_LEN(INTN_INT64_LEN, INTN_INT64_LEN)];
     intn_integer_sign_t out_sign;
     size_t out_len = intn_add_int64(val1, val2, add_out, &out_sign);
 
@@ -719,8 +718,7 @@ term bif_erlang_plus_1(Context *ctx, uint32_t fail_label, int live, term arg1)
 static term sub_int64_to_bigint(
     Context *ctx, uint32_t fail_label, uint32_t live, int64_t val1, int64_t val2)
 {
-    size_t out_buf_len = INTN_SUB_OUT_LEN(INTN_INT64_LEN, INTN_INT64_LEN);
-    intn_digit_t sub_out[out_buf_len];
+    intn_digit_t sub_out[INTN_SUB_OUT_LEN(INTN_INT64_LEN, INTN_INT64_LEN)];
     intn_integer_sign_t out_sign;
     size_t out_len = intn_sub_int64(val1, val2, sub_out, &out_sign);
 
@@ -847,12 +845,13 @@ term bif_erlang_sub_2(Context *ctx, uint32_t fail_label, int live, term arg1, te
 static term mul_int64_to_bigint(
     Context *ctx, uint32_t fail_label, uint32_t live, int64_t val1, int64_t val2)
 {
-    size_t mul_out_len = INTN_MUL_OUT_LEN(INTN_INT64_LEN, INTN_INT64_LEN);
-    intn_digit_t mul_out[mul_out_len];
+    #define MUL_INT64_OUT_LEN INTN_MUL_OUT_LEN(INTN_INT64_LEN, INTN_INT64_LEN)
+    intn_digit_t mul_out[MUL_INT64_OUT_LEN];
     intn_integer_sign_t out_sign;
     intn_mul_int64(val1, val2, mul_out, &out_sign);
 
-    return make_bigint(ctx, fail_label, live, mul_out, mul_out_len, out_sign);
+    return make_bigint(ctx, fail_label, live, mul_out, MUL_INT64_OUT_LEN, out_sign);
+    #undef MUL_INT64_OUT_LEN
 }
 
 static term mul_maybe_bigint(Context *ctx, uint32_t fail_label, uint32_t live, term arg1, term arg2)

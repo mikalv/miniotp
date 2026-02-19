@@ -31,11 +31,14 @@
 #include "platform_atomic.h"
 #endif
 
+// ATOMIC may already be defined by platform_atomic.h
+#ifndef ATOMIC
 #if defined(HAVE_ATOMIC) && !defined(__cplusplus)
 #include <stdatomic.h>
 #define ATOMIC _Atomic
 #else
 #define ATOMIC
+#endif
 #endif
 
 #ifdef __cplusplus

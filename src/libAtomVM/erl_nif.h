@@ -64,8 +64,13 @@ typedef struct
 
 /**
  * @brief Selectable event.
+ * @details Platforms should define ErlNifEvent in platform headers for platform-specific
+ *          event types (e.g., HANDLE on Windows, int on Unix).
  */
+#ifndef TYPEDEF_ERL_NIF_EVENT
+#define TYPEDEF_ERL_NIF_EVENT
 typedef int ErlNifEvent;
+#endif
 
 /**
  * @brief Destructor callback

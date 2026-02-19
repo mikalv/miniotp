@@ -685,8 +685,9 @@ TermCompareResult term_compare(term t, term other, TermCompareOpts opts, GlobalC
                                 other_len = 2;
                             }
                             if (len == other_len) {
-                                uint32_t data[len];
-                                uint32_t other_data[len];
+                                // len is either 2 or 4, use fixed-size array
+                                uint32_t data[4];
+                                uint32_t other_data[4];
                                 if (len == 2) {
                                     int64_t t_ticks = term_to_ref_ticks(t);
                                     data[0] = t_ticks >> 32;
